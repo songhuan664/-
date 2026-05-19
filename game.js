@@ -1771,7 +1771,42 @@ const LINEAR_ELIMINATION_SCORE = 15; // 线性消除固定获得15分
 
 // 查找所有五消及以上的匹配组
 function findFiveOrMoreMatches(matchGroups) {
-    const fiveMatches = matchGroups.filter(group => group.cells.length >= 5);
+    // 只检测单一方向上连续的 5 个水果（真正的五消）
+    const fiveMatches = matchGroups.filter(group => {
+        // 必须是横向或纵向的连续匹配
+        if (group.type !== 'horizontal' && group.type !== 'vertical') {
+            return false;
+        }
+        // 必须是连续的 5 个或以上水果
+        if (group.cells.length < 5) {
+            return false;
+        }
+        
+        // 检查是否真的是连续的五消（不是纵横交错的混合组）
+        if (group.type === 'horizontal') {
+            // 横向五消：所有水果必须在同一行，且列是连续的
+            const rows = [...new Set(group.cells.map(c => c.row))];
+            if (rows.length !== 1) return false; // 不在同一行，不是真正的横向五消
+            
+            // 检查列是否连续
+            const cols = group.cells.map(c => c.col).sort((a, b) => a - b);
+            for (let i = 1; i < cols.length; i++) {
+                if (cols[i] - cols[i - 1] !== 1) return false; // 列不连续
+            }
+        } else if (group.type === 'vertical') {
+            // 纵向五消：所有水果必须在同一列，且行是连续的
+            const cols = [...new Set(group.cells.map(c => c.col))];
+            if (cols.length !== 1) return false; // 不在同一列，不是真正的纵向五消
+            
+            // 检查行是否连续
+            const rows = group.cells.map(c => c.row).sort((a, b) => a - b);
+            for (let i = 1; i < rows.length; i++) {
+                if (rows[i] - rows[i - 1] !== 1) return false; // 行不连续
+            }
+        }
+        
+        return true;
+    });
     console.log(`findFiveOrMoreMatches: 总匹配组=${matchGroups.length}, 五消组=${fiveMatches.length}`);
     return fiveMatches;
 }
