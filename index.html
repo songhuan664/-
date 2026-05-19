@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雷霆消消乐</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 主界面 -->
+    <div id="mainMenu" class="menu">
+        <div class="menu-buttons">
+            <button id="saveGame">保存游戏</button>
+            <button id="levelSelect">进入游戏</button>
+            <button id="skillMenu">技能介绍</button>
+            <button id="gameInstructions">游戏说明</button>
+            <button id="resetGame" class="secondary-btn">重置游戏</button>
+            <button id="unlockAll" class="secondary-btn">破解权限</button>
+        </div>
+        <div class="warning-tip">温馨提示：若游戏出现卡死或无响应，请返回主页保存游戏后再重进！</div>
+        <div id="saveIndicator" class="save-indicator hidden">✓ 已保存</div>
+    </div>
+    
+    <!-- 重置游戏确认弹窗 -->
+    <div id="resetConfirmModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>确认重置游戏？</h3>
+            <p>此操作将清除所有游戏进度，包括解锁的关卡、技能和积分。</p>
+            <p>此操作不可撤销！</p>
+            <div class="modal-buttons">
+                <button id="confirmReset">确认重置</button>
+                <button id="cancelReset">取消</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 破解权限弹窗 -->
+    <div id="unlockModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>破解权限</h3>
+            <p>输入密码解锁全部游戏内容：</p>
+            <input type="password" id="unlockPassword" placeholder="请输入密码">
+            <div class="password-hint">提示：密码是1</div>
+            <div class="modal-buttons">
+                <button id="confirmUnlock">确认</button>
+                <button id="cancelUnlock">取消</button>
+            </div>
+            <div id="unlockMessage" class="message"></div>
+        </div>
+    </div>
+
+    <!-- 关卡选择界面 -->
+    <div id="levelMenu" class="menu hidden">
+        <h2>选择关卡</h2>
+        <div class="level-list">
+            <div class="level-item" data-level="1">
+                <span>第1关</span>
+                <span>目标: 150分</span>
+                <span>步数: 20</span>
+            </div>
+            <div class="level-item locked" data-level="2">
+                <span>第2关</span>
+                <span>目标: 200分</span>
+                <span>步数: 25</span>
+            </div>
+            <div class="level-item locked" data-level="3">
+                <span>第3关</span>
+                <span>目标: 250分</span>
+                <span>步数: 30</span>
+            </div>
+            <div class="level-item locked" data-level="4">
+                <span>第4关</span>
+                <span>目标: 300分</span>
+                <span>步数: 30</span>
+            </div>
+            <div class="level-item locked" data-level="5">
+                <span>第5关</span>
+                <span>目标: 350分</span>
+                <span>步数: 30</span>
+            </div>
+            <div class="level-item locked" data-level="6">
+                <span>第6关</span>
+                <span>目标: 400分</span>
+                <span>步数: 35</span>
+            </div>
+            <div class="level-item locked" data-level="7">
+                <span>第7关</span>
+                <span>目标: 500分</span>
+                <span>步数: 35</span>
+            </div>
+            <div class="level-item locked" data-level="8">
+                <span>第8关</span>
+                <span>目标: 600分</span>
+                <span>步数: 35</span>
+            </div>
+            <div class="level-item locked" data-level="9">
+                <span>第9关</span>
+                <span>目标: 700分</span>
+                <span>步数: 35</span>
+            </div>
+            <div class="level-item locked" data-level="10">
+                <span>第10关</span>
+                <span>目标: 1000分</span>
+                <span>步数: 40</span>
+            </div>
+            <div class="level-item locked" data-level="11">
+                <span>第11关</span>
+                <span>无尽模式</span>
+            </div>
+            <div class="level-item locked hell-mode" data-level="12">
+                <span>地狱挑战</span>
+                <span>目标: 4000分</span>
+                <span>步数: 45</span>
+            </div>
+        </div>
+        <button class="back-button">返回</button>
+    </div>
+
+    <!-- 技能介绍界面 -->
+    <div id="skillMenuPanel" class="menu hidden">
+        <h2>技能介绍</h2>
+        <div class="skill-list">
+            <div class="skill-item locked" data-skill="1">
+                <div class="skill-icon strawberry"></div>
+                <div class="skill-info">
+                    <h3>声东击西</h3>
+                    <p>解锁条件: 初始解锁</p>
+                    <p>触发条件: 累计消除9个草莓</p>
+                    <p>效果: 随机消除两处2×2区域</p>
+                    <p style="color: #27ae60; font-weight: bold;">触发技能后固定获得15分</p>
+                </div>
+            </div>
+            <div class="skill-item locked" data-skill="2">
+                <div class="skill-icon blueberries"></div>
+                <div class="skill-info">
+                    <h3>中心爆破</h3>
+                    <p>解锁条件: 通关第2关</p>
+                    <p>触发条件: 累计消除8个蓝莓</p>
+                    <p>效果: 随机消除一处3×3区域</p>
+                    <p style="color: #27ae60; font-weight: bold;">触发技能后固定获得20分</p>
+                </div>
+            </div>
+            <div class="skill-item locked" data-skill="3">
+                <div class="skill-icon orange"></div>
+                <div class="skill-info">
+                    <h3>十字激光</h3>
+                    <p>解锁条件: 通关第4关</p>
+                    <p>触发条件: 累计消除9个橙子</p>
+                    <p>效果: 随机选择一个水果作为中心，往上下左右延伸出十字并消除十字区域内的水果</p>
+                    <p style="color: #27ae60; font-weight: bold;">触发技能后固定获得25分</p>
+                </div>
+            </div>
+            <div class="skill-item locked" data-skill="4">
+                <div class="skill-icon grape"></div>
+                <div class="skill-info">
+                    <h3>全域重塑</h3>
+                    <p>解锁条件: 通关第6关</p>
+                    <p>触发条件: 累计消除18个葡萄</p>
+                    <p>效果: 将一个葡萄转化为高亮葡萄</p>
+                    <p style="color: #27ae60; font-weight: bold;">触发技能后固定获得0分</p>
+                </div>
+            </div>
+            <div class="skill-item locked" data-skill="5">
+                <div class="skill-icon kiwi"></div>
+                <div class="skill-info">
+                    <h3>幸运王冕 <span class="passive-badge">被动技能</span></h3>
+                    <p>解锁条件: 通关第8关</p>
+                    <p>触发条件: 累计消除20个猕猴桃</p>
+                    <p>效果: 被动技能，触发后的五次消除均额外获得12分</p>
+                    <p style="color: #27ae60; font-weight: bold;">五次消除的额外加分共计为60分</p>
+                    <p style="color: #e74c3c; font-weight: bold;">※ 被动技能无需携带，解锁后自动生效</p>
+                </div>
+            </div>
+            <!-- 高亮葡萄介绍 -->
+            <div class="highlight-grape-info">
+                <div class="skill-icon grape-highlight"></div>
+                <div class="skill-info">
+                    <h3>💎 高亮葡萄效果</h3>
+                    <p style="color: #9b59b6; font-weight: bold;">移动高亮葡萄可消除掉相邻的任意一个水果，被高亮葡萄消除的水果会连带场上所有同类型水果被消除</p>
+                    <p style="color: #27ae60; font-weight: bold;">消除后固定获得40分</p>
+                    <p>特殊机制: 由高亮葡萄消除的水果按50%的比例计入对应水果技能的计数，向下取整。高亮葡萄只能由玩家亲自移动后被消除，无法被其余任何方式消除。场上最多同时存在3个高亮葡萄。</p>
+                </div>
+            </div>
+        </div>
+        <button class="back-button">返回</button>
+    </div>
+
+    <!-- 技能选择界面 -->
+    <div id="skillSelect" class="menu hidden">
+        <div class="level-info">
+            <span id="current-level">关卡：1</span>
+            <span id="level-target">目标：消除指定数量水果</span>
+        </div>
+        <div id="skill-recommendation">
+            <span class="recommendation-label">建议携带：</span>
+            <div id="recommended-skills"></div>
+        </div>
+        <h2>选择技能</h2>
+        <!-- 技能槽位显示 -->
+        <div class="selected-skills-display">
+            <div class="skill-slot-display" data-slot="1">
+                <div class="slot-icon-wrapper">
+                    <div class="slot-icon" id="slot1-icon"></div>
+                </div>
+                <span class="slot-label">技能槽1 (按键1)</span>
+            </div>
+            <div class="skill-slot-display" data-slot="2">
+                <div class="slot-icon-wrapper">
+                    <div class="slot-icon locked" id="slot2-icon"></div>
+                </div>
+                <span class="slot-label">技能槽2 (按键2)</span>
+            </div>
+        </div>
+        <div class="skill-select-list">
+            <div class="skill-select-item locked" data-skill="1">
+                <div class="skill-icon strawberry"></div>
+                <span>声东击西</span>
+                <div class="skill-description">累计消除9个草莓后触发，随机消除两处2×2区域，获得8分</div>
+            </div>
+            <div class="skill-select-item locked" data-skill="2">
+                <div class="skill-icon blueberries"></div>
+                <span>中心爆破</span>
+                <div class="skill-description">累计消除8个蓝莓后触发，随机消除一处3×3区域，获得9分</div>
+            </div>
+            <div class="skill-select-item locked" data-skill="3">
+                <div class="skill-icon orange"></div>
+                <span>十字激光</span>
+                <div class="skill-description">累计消除9个橙子后触发，消除十字区域内所有水果，获得10分</div>
+            </div>
+            <div class="skill-select-item locked" data-skill="4">
+                <div class="skill-icon grape"></div>
+                <span>全域重塑</span>
+                <div class="skill-description">累计消除18个葡萄后触发，将一个葡萄转化为高亮葡萄</div>
+                <button class="highlight-grape-help-btn" title="高亮葡萄说明">!</button>
+            </div>
+            <div class="skill-select-item locked" data-skill="5">
+                <div class="skill-icon kiwi"></div>
+                <span>幸运王冕</span>
+                <div class="skill-description">累计消除20个猕猴桃后触发，被动技能，5次消除额外+12分</div>
+            </div>
+        </div>
+        <div class="skill-select-buttons">
+            <button id="confirmSkill">确认并进入关卡</button>
+            <button id="backToLevelSelect" class="secondary-button">返回关卡选择</button>
+            <button id="backToMainFromSkill" class="secondary-button">返回主页</button>
+        </div>
+    </div>
+
+    <!-- 高亮葡萄说明弹窗 -->
+    <div id="highlightGrapeModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>💎 高亮葡萄说明</h3>
+            <p>高亮葡萄是一种特殊水果，移动高亮葡萄可消除掉相邻的任意一个水果，被高亮葡萄消除的水果会连带场上所有同类型水果被消除，同时获得40分固定分数。</p>
+            <p>注：由高亮葡萄消除的水果按50%的比例计入对应水果技能的计数，向下取整。高亮葡萄只能由玩家亲自移动后被消除，无法被其余任何方式消除。场上最多同时存在3个高亮葡萄。</p>
+            <button id="closeHighlightGrapeModal" class="modal-close-btn">关闭</button>
+        </div>
+    </div>
+
+    <!-- 得分规则说明弹窗 -->
+    <div id="scoreRulesModal" class="modal hidden">
+        <div class="modal-content score-rules-modal">
+            <h3>📝 五消特殊效果说明</h3>
+            <p>当同一方向形成五消及以上的消除时</p>
+            <p>会在该水果组里随机选一个水果为中心</p>
+            <p>进行反方向线性消除</p>
+            <p>（若该五消为纵向，则线性消除为横向）</p>
+            <p>线性消除固定获得15分</p>
+            <button id="closeScoreRulesModal" class="modal-close-btn score-rules-close-btn">关闭</button>
+        </div>
+    </div>
+
+    <!-- 游戏界面 -->
+    <div id="gameInterface" class="hidden">
+        <div class="game-header">
+            <div class="game-info">
+                <div class="score">分数: <span id="scoreDisplay">0</span></div>
+                <div class="steps">步数: <span id="stepsDisplay">0</span></div>
+                <div class="level">关卡: <span id="levelDisplay">1</span></div>
+            </div>
+            <div class="level-goal">
+                <span id="goalDisplay">目标分数: 100分</span>
+                <span id="stepsLeftDisplay">剩余步数: 35</span>
+            </div>
+        </div>
+        <div class="game-container">
+            <div class="skill-progress">
+                <div class="progress-bar" data-skill="1"></div>
+                <div class="progress-bar" data-skill="2"></div>
+                <div class="progress-bar" data-skill="3"></div>
+                <div class="progress-bar" data-skill="4"></div>
+                <div class="progress-bar" data-skill="5"></div>
+            </div>
+            <div class="game-grid-wrapper">
+                <div class="game-grid-background"></div>
+                <div class="game-grid" id="gameGrid"></div>
+                <div class="particles-layer" id="particlesLayer"></div>
+            </div>
+            <!-- 右侧面板容器 -->
+            <div class="right-panel">
+                <div class="score-rules">
+                    <h3>得分规则</h3>
+                    <button class="score-rules-help-btn" id="scoreRulesHelpBtn">!</button>
+                    <ul>
+                        <li>消除3个水果：3分</li>
+                        <li>消除4个水果：5分</li>
+                        <li>消除5个水果：7分</li>
+                        <li>消除6个水果：10分</li>
+                    </ul>
+                </div>
+                <!-- 被动技能槽 - 幸运王冕 -->
+                <div class="passive-skill-slot" id="passiveSkillSlot">
+                    <div class="passive-skill-header">
+                        <div class="passive-skill-icon-wrapper">
+                            <div class="passive-skill-icon kiwi" id="passiveSkillIcon"></div>
+                        </div>
+                        <span class="passive-skill-name">幸运王冕</span>
+                    </div>
+                    <div class="passive-skill-progress">
+                        <div class="passive-progress-bar">
+                            <div class="passive-progress-fill" id="passiveProgressFill"></div>
+                        </div>
+                        <span class="passive-progress-text" id="passiveProgressText">0/15</span>
+                    </div>
+                    <div class="passive-skill-description">
+                        5次消除额外+12分
+                    </div>
+                    <div class="passive-skill-stats">
+                        <span class="passive-stat">剩余加分次数：<span id="luckyCrownRemaining">0</span></span>
+                    </div>
+                    <button class="passive-toggle-btn" id="passiveToggleBtn" disabled>
+                        <span class="toggle-text">关</span>
+                    </button>
+                </div>
+                <!-- 幸运王冕触发弹窗 -->
+                <div class="lucky-crown-modal" id="luckyCrownModal">
+                    <div class="lucky-crown-content">
+                        <h3>幸运王冕</h3>
+                        <p>接下来5次消除每次额外获得12分！</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="game-buttons">
+            <button id="restartGame">重新开始</button>
+            <button id="结算分数">结算分数</button>
+            <button id="返回主页">返回主页</button>
+        </div>
+    </div>
+
+    <!-- 游戏说明界面 -->
+    <div id="instructionsMenu" class="menu hidden instructions-menu">
+        <h2>游戏说明</h2>
+        <div class="instructions-nav">
+            <button class="tab-button active" data-tab="rules">游戏规则</button>
+            <button class="tab-button" data-tab="controls">操作指南</button>
+            <button class="tab-button" data-tab="mechanics">核心机制</button>
+        </div>
+        
+        <div class="instructions-content">
+            <div class="instruction-tab active" id="rules-tab">
+                <!-- 上方三个横向排列的UI -->
+                <div class="rules-top-row">
+                    <div class="rule-section small">
+                        <h4>目标</h4>
+                        <p>在规定步数内达到关卡目标分数</p>
+                    </div>
+                    <div class="rule-section small">
+                        <h4>胜利条件</h4>
+                        <p>达到或超过目标分数</p>
+                    </div>
+                    <div class="rule-section small">
+                        <h4>失败条件</h4>
+                        <p>步数用完但分数未达到目标</p>
+                    </div>
+                </div>
+                <!-- 下方两个纵向排列的UI -->
+                <div class="rules-bottom-row">
+                    <div class="rule-section large">
+                        <h4>关卡说明</h4>
+                        <ul>
+                            <li><strong>奇数关卡</strong>：需触发特定次数的技能并且达到指定分数</li>
+                            <li><strong>偶数关卡</strong>：只需达到指定分数</li>
+                            <li><strong>步数限制</strong>：每一关都有限制步数，在关卡内上方显示</li>
+                            <li><strong>无尽模式</strong>：无限制</li>
+                        </ul>
+                    </div>
+                    <div class="rule-section large score-rules-section">
+                        <h4>得分规则</h4>
+                        <ul>
+                            <li>消除3个水果：3分</li>
+                            <li>消除4个水果：5分</li>
+                            <li>消除5个水果：7分</li>
+                            <li>消除6个水果：10分</li>
+                        </ul>
+                        <div class="five-match-section">
+                            <h5>五消特殊效果说明</h5>
+                            <p>当同一方向形成五消及以上的消除时，会在该水果组里随机选一个水果为中心，进行反方向线性消除。若该五消为纵向，则线性消除为横向。线性消除固定获得15分。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instruction-tab" id="controls-tab">
+                <!-- 上方两个横向排列的UI -->
+                <div class="controls-top-row">
+                    <div class="guide-section small">
+                        <h4>基本操作</h4>
+                        <ol>
+                            <li><strong>选择水果</strong>：点击任意水果选中它</li>
+                            <li><strong>交换水果</strong>：选中一个水果后，点击相邻水果进行交换</li>
+                            <li><strong>取消选择</strong>：再次点击已选中的水果取消选择</li>
+                        </ol>
+                    </div>
+                    <div class="guide-section small">
+                        <h4>交换规则</h4>
+                        <ul>
+                            <li>只能与上下左右相邻的水果交换</li>
+                            <li>每次交换消耗1步</li>
+                            <li>交换后若形成匹配则消除水果</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 下方占据整行的UI -->
+                <div class="controls-bottom-row">
+                    <div class="guide-section large">
+                        <h4>界面说明</h4>
+                        <ul>
+                            <li><strong>顶部栏</strong>：显示分数、步数、关卡信息</li>
+                            <li><strong>左侧技能条</strong>：显示各技能积累进度</li>
+                            <li><strong>中间棋盘</strong>：9×9的游戏区域</li>
+                            <li><strong>右侧提示</strong>：显示得分规则</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instruction-tab" id="mechanics-tab">
+                <!-- 上方两个横向排列的UI（匹配规则和下落机制） -->
+                <div class="mechanics-top-row">
+                    <div class="mechanics-section small">
+                        <h4>匹配规则</h4>
+                        <ul>
+                            <li><strong>横向匹配</strong>：3个或更多相同水果横向连接</li>
+                            <li><strong>纵向匹配</strong>：3个或更多相同水果纵向连接</li>
+                            <li><strong>交叉匹配</strong>：同时形成横向和纵向匹配可同时消除</li>
+                        </ul>
+                    </div>
+                    <div class="mechanics-section small">
+                        <h4>下落机制</h4>
+                        <ol>
+                            <li>消除水果后，上方水果会自然下落填补</li>
+                            <li>若顶部有空位，会生成新水果填补</li>
+                            <li>下落过程中形成的匹配会自动消除</li>
+                        </ol>
+                    </div>
+                </div>
+                <!-- 中间技能系统说明 -->
+                <div class="mechanics-middle-row">
+                    <div class="mechanics-section large">
+                        <h4>技能系统</h4>
+                        <div class="skill-summary">
+                            <p><strong>解锁规则</strong>：通关偶数关卡解锁新技能</p>
+                            <p><strong>触发条件</strong>：累计消除特定水果达到一定数量即可触发</p>
+                            <p><strong>计数规则</strong>：最大累计已消除水果的数量为触发技能数量的四倍（如：触发声东击西需要消除9个草莓，则累计的已消除草莓数量最大值为36）</p>
+                            <p><strong>消除优先级</strong>：手动消除＞技能消除＞下落消除</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="back-button" id="instructionsBack">返回</button>
+    </div>
+
+    <!-- 关卡结算界面 -->
+    <div id="levelComplete" class="menu hidden">
+        <h2>关卡完成</h2>
+        <div class="result-info">
+            <p>得分: <span id="finalScore"></span></p>
+            <p>步数: <span id="finalSteps"></span></p>
+            <p>积分: <span id="finalPoints"></span></p>
+        </div>
+        <div class="result-buttons">
+            <button id="nextLevel">下一关</button>
+            <button id="replayLevel">重新开始</button>
+            <button id="backToMain">返回主页</button>
+        </div>
+    </div>
+
+    <!-- 游戏结束弹窗 -->
+    <div id="gameOverModal" class="modal-overlay hidden">
+        <div class="modal-content-small">
+            <h2 id="gameOverTitle">游戏结束</h2>
+            <p id="gameOverMessage" class="game-over-message"></p>
+            <div class="modal-buttons">
+                <button id="gameOverReplay">重新开始</button>
+                <button id="gameOverBack">返回主页</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
