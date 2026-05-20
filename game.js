@@ -1028,7 +1028,7 @@ function updateGameInfo() {
     
     if (gameState.currentLevel <= 10) {
         // 第1-10关：显示普通关卡目标
-        elements.levelDisplay.textContent = gameState.currentLevel;
+        elements.levelDisplay.textContent = `关卡：${gameState.currentLevel}`;
         let goalText = `目标分数: ${levelConfig.goal}分`;
         // 如果有技能触发要求，添加显示
         if (levelConfig.skillRequirement) {
@@ -1051,7 +1051,7 @@ function updateGameInfo() {
         updateSkillTriggerModal();
     } else if (gameState.currentLevel === 11) {
         // 第11关：无尽模式
-        elements.levelDisplay.textContent = gameState.currentLevel;
+        elements.levelDisplay.textContent = '关卡：11';
         elements.goalDisplay.textContent = '无尽模式';
         elements.stepsLeftDisplay.textContent = '无步数限制';
         // 更新技能触发次数弹窗（隐藏）
