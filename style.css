@@ -2402,6 +2402,47 @@ button:active {
     margin: 0;
 }
 
+/* 技能触发次数弹窗 */
+.skill-trigger-modal {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 150;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.skill-trigger-content {
+    background-color: rgba(255, 248, 220, 0.95);
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #d4a574;
+    min-width: 120px;
+}
+
+.skill-trigger-content h3 {
+    color: #8b4513;
+    font-size: 14px;
+    margin: 0 0 8px 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+.skill-trigger-content #skillTriggerList {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.skill-trigger-content #skillTriggerList p {
+    color: #333;
+    font-size: 12px;
+    margin: 0;
+    text-align: left;
+    white-space: nowrap;
+}
+
 /* 幸运王冕棋盘边缘发光效果 */
 .game-grid-wrapper.crown-active {
     position: relative;

@@ -275,7 +275,7 @@
             <div class="game-info">
                 <div class="score">分数: <span id="scoreDisplay">0</span></div>
                 <div class="steps">步数: <span id="stepsDisplay">0</span></div>
-                <div class="level">关卡: <span id="levelDisplay">1</span></div>
+                <div class="level"><span id="levelDisplay">1</span></div>
             </div>
             <div class="level-goal">
                 <span id="goalDisplay">目标分数: 100分</span>
@@ -336,6 +336,17 @@
                     <div class="lucky-crown-content">
                         <h3>幸运王冕</h3>
                         <p>接下来5次消除每次额外获得12分！</p>
+                    </div>
+                </div>
+                <!-- 技能触发次数弹窗 -->
+                <div class="skill-trigger-modal hidden" id="skillTriggerModal">
+                    <div class="skill-trigger-content">
+                        <h3>触发次数：</h3>
+                        <div id="skillTriggerList">
+                            <p>声东击西：0/6</p>
+                            <p>中心爆破：0/6</p>
+                            <p>幸运王冕：0/6</p>
+                        </div>
                     </div>
                 </div>
             </div>

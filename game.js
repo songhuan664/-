@@ -15,7 +15,7 @@ const LEVELS = [
     { goal: 700, steps: 35, skillRequirement: { skillId: 5, triggerCount: 6 }, description: '累计触发6次幸运王冕' }, // 第9关
     { goal: 1000, steps: 40 }, // 第10关（通关后解锁无尽模式和地狱挑战）
     { goal: 0, steps: 0 }, // 第11关 - 无尽模式
-    { goal: 4000, steps: 45, skillRequirement: { skillId: 5, triggerCount: 6 }, description: '各触发6次携带技能和幸运王冕', isHellMode: true } // 第12关 - 地狱挑战
+    { goal: 4000, steps: 45, skillRequirement: { skillId: 5, triggerCount: 12 }, description: '各触发12次携带技能和幸运王冕', isHellMode: true } // 第12关 - 地狱挑战
 ];
 
 // 游戏状态
@@ -1023,11 +1023,12 @@ function renderGrid() {
 function updateGameInfo() {
     elements.scoreDisplay.textContent = gameState.score;
     elements.stepsDisplay.textContent = gameState.steps;
-    elements.levelDisplay.textContent = gameState.currentLevel;
     
     const levelConfig = LEVELS[gameState.currentLevel - 1];
     
     if (gameState.currentLevel <= 10) {
+        // 第1-10关：显示普通关卡目标
+        elements.levelDisplay.textContent = gameState.currentLevel;
         let goalText = `目标分数: ${levelConfig.goal}分`;
         // 如果有技能触发要求，添加显示
         if (levelConfig.skillRequirement) {
@@ -1046,9 +1047,70 @@ function updateGameInfo() {
         goalText += `  |  剩余步数: ${levelConfig.steps - gameState.steps}`;
         elements.goalDisplay.textContent = goalText;
         elements.stepsLeftDisplay.textContent = ''; // 清空原来的剩余步数显示
-    } else {
+        // 更新技能触发次数弹窗（隐藏）
+        updateSkillTriggerModal();
+    } else if (gameState.currentLevel === 11) {
+        // 第11关：无尽模式
+        elements.levelDisplay.textContent = gameState.currentLevel;
         elements.goalDisplay.textContent = '无尽模式';
         elements.stepsLeftDisplay.textContent = '无步数限制';
+        // 更新技能触发次数弹窗（隐藏）
+        updateSkillTriggerModal();
+    } else if (gameState.currentLevel === 12) {
+        // 第12关：地狱挑战模式
+        elements.levelDisplay.textContent = '地狱挑战';
+        let goalText = `目标分数: ${levelConfig.goal}分`;
+        // 不显示技能要求在顶部，改用弹窗显示
+        goalText += `  |  剩余步数: ${levelConfig.steps - gameState.steps}`;
+        elements.goalDisplay.textContent = goalText;
+        elements.stepsLeftDisplay.textContent = ''; // 清空右边的内容
+        // 更新技能触发次数弹窗（显示）
+        updateSkillTriggerModal();
+    }
+}
+
+// 更新技能触发次数弹窗
+function updateSkillTriggerModal() {
+    const modal = document.getElementById('skillTriggerModal');
+    const list = document.getElementById('skillTriggerList');
+    
+    if (!modal || !list) return;
+    
+    // 地狱挑战模式显示弹窗
+    if (gameState.currentLevel === 12) {
+        modal.classList.remove('hidden');
+        
+        const skillNames = {
+            1: '声东击西',
+            2: '中心爆破',
+            3: '十字激光',
+            4: '全域重塑',
+            5: '幸运王冕'
+        };
+        
+        // 获取关卡配置中的触发次数要求
+        const levelConfig = LEVELS[gameState.currentLevel - 1];
+        const triggerCount = levelConfig.skillRequirement ? levelConfig.skillRequirement.triggerCount : 6;
+        
+        let html = '';
+        
+        // 显示玩家携带的两个主动技能
+        if (gameState.selectedSkills && gameState.selectedSkills.length > 0) {
+            gameState.selectedSkills.forEach(skillId => {
+                if (skillId && skillId !== 5) { // 排除被动技能幸运王冕
+                    const currentCount = gameState.skillTriggerCounts[skillId] || 0;
+                    html += `<p>${skillNames[skillId]}：${currentCount}/${triggerCount}</p>`;
+                }
+            });
+        }
+        
+        // 始终显示幸运王冕（被动技能）
+        const luckyCrownCount = gameState.skillTriggerCounts[5] || 0;
+        html += `<p>幸运王冕：${luckyCrownCount}/${triggerCount}</p>`;
+        
+        list.innerHTML = html;
+    } else {
+        modal.classList.add('hidden');
     }
 }
 
@@ -2687,6 +2749,9 @@ function useSkill5() {
     gameState.skillTriggerCounts[5]++;
     console.log(`幸运王冕已触发 ${gameState.skillTriggerCounts[5]} 次`);
     
+    // 更新技能触发次数弹窗
+    updateSkillTriggerModal();
+    
     // 幸运王冕效果：接下来5次消除每次额外获得12分
     gameState.luckyCrownActive = 5;
     console.log('幸运王冕效果激活：接下来5次消除每次额外+12分');
@@ -3535,6 +3600,9 @@ function useSkill1() {
     // 增加技能触发计数
     gameState.skillTriggerCounts[1]++;
     console.log(`声东击西已触发 ${gameState.skillTriggerCounts[1]} 次`);
+    
+    // 更新技能触发次数弹窗
+    updateSkillTriggerModal();
 
     // 随机选择两处2×2区域（不重叠）
     const areas = [];
@@ -3637,6 +3705,9 @@ function useSkill2() {
     // 增加技能触发计数
     gameState.skillTriggerCounts[2]++;
     console.log(`中心爆破已触发 ${gameState.skillTriggerCounts[2]} 次`);
+    
+    // 更新技能触发次数弹窗
+    updateSkillTriggerModal();
 
     // 随机选择一处3×3区域
     const row = Math.floor(Math.random() * (GRID_SIZE - 2));
@@ -3719,6 +3790,9 @@ function useSkill3() {
     // 增加技能触发计数
     gameState.skillTriggerCounts[3]++;
     console.log(`十字激光已触发 ${gameState.skillTriggerCounts[3]} 次`);
+    
+    // 更新技能触发次数弹窗
+    updateSkillTriggerModal();
 
     // AI随机选择一个水果作为中心
     const row = Math.floor(Math.random() * GRID_SIZE);
@@ -3816,6 +3890,9 @@ function useSkill4() {
     // 增加技能触发计数
     gameState.skillTriggerCounts[4]++;
     console.log(`全域重塑已触发 ${gameState.skillTriggerCounts[4]} 次`);
+    
+    // 更新技能触发次数弹窗
+    updateSkillTriggerModal();
 
     // 设置全域重塑冷却3轮
     gameState.skill4CooldownRounds = 3;
@@ -3936,11 +4013,30 @@ function checkLevelComplete() {
         return false;
     }
     
-    // 检查技能触发条件（奇数关卡）
+    // 检查技能触发条件
     if (levelConfig.skillRequirement) {
-        const { skillId, triggerCount } = levelConfig.skillRequirement;
-        if (gameState.skillTriggerCounts[skillId] < triggerCount) {
-            return false;
+        const { triggerCount } = levelConfig.skillRequirement;
+        
+        // 地狱挑战模式：检查三个技能都达到触发次数要求
+        if (gameState.currentLevel === 12 && levelConfig.isHellMode) {
+            // 检查玩家携带的主动技能
+            if (gameState.selectedSkills && gameState.selectedSkills.length > 0) {
+                for (const skillId of gameState.selectedSkills) {
+                    if (skillId && skillId !== 5 && gameState.skillTriggerCounts[skillId] < triggerCount) {
+                        return false;
+                    }
+                }
+            }
+            // 检查幸运王冕被动技能
+            if (gameState.skillTriggerCounts[5] < triggerCount) {
+                return false;
+            }
+        } else {
+            // 其他关卡：只检查配置的特定技能
+            const { skillId } = levelConfig.skillRequirement;
+            if (gameState.skillTriggerCounts[skillId] < triggerCount) {
+                return false;
+            }
         }
     }
     
@@ -4088,7 +4184,7 @@ function getLevelTarget(level) {
         9: '达到700分\n触发6次幸运王冕\n限制35步',
         10: '达到1000分\n限制40步',
         11: '无尽模式\n挑战最高分',
-        12: '地狱挑战\n45步内达到4000分\n各触发6次携带技能和幸运王冕'
+        12: '地狱挑战\n45步内达到4000分\n各触发12次携带技能和幸运王冕'
     };
     return targets[level] || '完成关卡任务';
 }
